@@ -7,11 +7,14 @@ import java.util.*;
 public class Scrabble {
 
     public static void main(String[] args) throws IOException {
+        long startTime = System.currentTimeMillis();
+
         Set<String> result = new HashSet<>();
         HashMap<Integer, Set<String>> wordsToCheck = loadAllWords("https://raw.githubusercontent.com/nikiiv/JavaCodingTestOne/master/scrabble-words.txt");
         collectValid9LetterWords(wordsToCheck, result);
-        System.out.println(result.size());
-        result.forEach(System.out::println);
+
+        long endTime = System.currentTimeMillis();
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");
     }
 
     public static HashMap<Integer, Set<String>> loadAllWords(String wordsUrl) throws IOException {
@@ -20,7 +23,6 @@ public class Scrabble {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))) {
             List<String> resultList = new ArrayList<>(br.lines().skip(2).toList());
             for (String word : resultList) {
-                word = word.strip();
                 if (word.length() <= 9 && (word.contains("I") || word.contains("A"))) {
                     switch (word.length()) {
                         case 9:
@@ -55,10 +57,10 @@ public class Scrabble {
                             resultMap.computeIfAbsent(2, k -> new HashSet<>());
                             resultMap.get(2).add(word);
                             break;
-                        case 1:
+                    /*    case 1:
                             resultMap.computeIfAbsent(1, k -> new HashSet<>());
                             resultMap.get(1).add(word);
-                            break;
+                            break;*/
                         default:
                             throw new IllegalStateException("Unexpected value: " + word.length());
                     }
