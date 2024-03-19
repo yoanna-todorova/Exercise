@@ -7,14 +7,11 @@ import java.util.*;
 public class Scrabble {
 
     public static void main(String[] args) throws IOException {
-        long startTime = System.currentTimeMillis();
-
         Set<String> result = new HashSet<>();
+        
         HashMap<Integer, Set<String>> wordsToCheck = loadAllWords("https://raw.githubusercontent.com/nikiiv/JavaCodingTestOne/master/scrabble-words.txt");
         collectValid9LetterWords(wordsToCheck, result);
-
-        long endTime = System.currentTimeMillis();
-        System.out.println("That took " + (endTime - startTime) + " milliseconds");
+        
         System.out.println(result.size());
         result.forEach(System.out::println);
     }
