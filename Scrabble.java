@@ -15,6 +15,8 @@ public class Scrabble {
 
         long endTime = System.currentTimeMillis();
         System.out.println("That took " + (endTime - startTime) + " milliseconds");
+        System.out.println(result.size());
+        result.forEach(System.out::println);
     }
 
     public static HashMap<Integer, Set<String>> loadAllWords(String wordsUrl) throws IOException {
@@ -57,10 +59,6 @@ public class Scrabble {
                             resultMap.computeIfAbsent(2, k -> new HashSet<>());
                             resultMap.get(2).add(word);
                             break;
-                    /*    case 1:
-                            resultMap.computeIfAbsent(1, k -> new HashSet<>());
-                            resultMap.get(1).add(word);
-                            break;*/
                         default:
                             throw new IllegalStateException("Unexpected value: " + word.length());
                     }
@@ -77,21 +75,26 @@ public class Scrabble {
     public static void collectValid9LetterWords(HashMap<Integer, Set<String>> wordsToCheck, Set<String> result) {
         Set<String> nineLetterWords = wordsToCheck.get(9);
         for (String word : nineLetterWords) {
-            if (producesValidSequence(word, wordsToCheck))
+            if (producesValidSequence(word, wordsToCheck, 0)) {
                 result.add(word);
+            }
         }
     }
 
-    public static boolean producesValidSequence(String word, HashMap<Integer, Set<String>> wordsToCheck) {
-        if (word.length() == 1 && (word.equalsIgnoreCase("a") || word.equalsIgnoreCase("i")))
+    public static boolean producesValidSequence(String word, HashMap<Integer, Set<String>> wordsToCheck, int position) {
+        if (word.length() == 1 && (word.equals("A") || word.equals("I"))) {
             return true;
-
-        for (int i = 0; i < word.length(); i++) {
-            String wordToCheck = word.substring(0, i).concat(word.substring(i + 1));
-            if (!wordToCheck.isEmpty() && wordsToCheck.get(wordToCheck.length()).contains(wordToCheck))
-                return producesValidSequence(wordToCheck, wordsToCheck);
+        }
+        if (position == 8) {
+            return false;
         }
 
+        for (int i = 0; i < word.length(); i++) {
+            String reducedWord = word.substring(0, i) + word.substring(i + 1);
+            if (wordsToCheck.get(reducedWord.length()).contains(reducedWord.toUpperCase()) && producesValidSequence(reducedWord, wordsToCheck, position + 1)) {
+                return true;
+            }
+        }
         return false;
     }
 
